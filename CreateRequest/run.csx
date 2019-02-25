@@ -15,18 +15,25 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     string strSql = "EXEC dbo.spCreateRequest @callsign, @password, @Latitude, @Longitude, @OutputPower, @Altitude, @AntennaHeight, @OutputFrequency";
 
     var ConnectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
-    using (SqlConnection Connection = new SqlConnection(ConnectionString))
+    try 
     {
-        Connection.Open();
-        SqlCommand cmd = new SqlCommand(strSql, Connection);
+        using (SqlConnection Connection = new SqlConnection(ConnectionString))
+        {
+            Connection.Open();
+            SqlCommand cmd = new SqlCommand(strSql, Connection);
 
-        addParameters(cmd, req, log);
+            addParameters(cmd, req, log);
 
-        SqlDataReader rdr = cmd.ExecuteReader();
-        dataTable.Load(rdr);
+            SqlDataReader rdr = cmd.ExecuteReader();
+            dataTable.Load(rdr);
 
-        rdr.Close();
-        Connection.Close();
+            rdr.Close();
+            Connection.Close();
+        }
+    }
+    catch(Exception ex) 
+    {
+        log.Error(string.Format("Exception: {0}\r\n\r\n{1}", ex.Message, req.Content.ReadAsStringAsync().Result));
     }
 
     var firstRow = JArray.FromObject(dataTable, JsonSerializer.CreateDefault(new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })).FirstOrDefault(); // Get the first row            
