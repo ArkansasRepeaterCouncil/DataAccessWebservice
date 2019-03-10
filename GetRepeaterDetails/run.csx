@@ -35,7 +35,10 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     log.Info("Checkpoint 1");
     var firstRow = JArray.FromObject(dataTable, JsonSerializer.CreateDefault(new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })).FirstOrDefault(); // Get the first row            
     log.Info("Checkpoint 2");
-    var json = firstRow.ToString(); 
+    var json = "{}";
+    if (firstRow != null) {
+        json = firstRow.ToString(); 
+    }
     log.Info("Checkpoint 3");
     //string json = Newtonsoft.Json.JsonConvert.SerializeObject(dataTable, Newtonsoft.Json.Formatting.Indented);
     return new HttpResponseMessage(HttpStatusCode.OK) 
