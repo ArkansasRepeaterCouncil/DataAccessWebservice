@@ -81,7 +81,7 @@ public static void addParameters(SqlCommand cmd, HttpRequestMessage req, TraceWr
                 else {
                     propertyValue = reader.Value.ToString();
                 }
-
+                log.Info("@" + propertyName + " = " + propertyValue);
                 cmd.Parameters.AddWithValue("@" + propertyName, propertyValue);
             }
         }

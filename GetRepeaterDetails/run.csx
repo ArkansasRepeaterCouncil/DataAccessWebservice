@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceWriter log)
 {
+    log.Info(req.RequestUri.ToString());
     var dataTable = new DataTable();
 
     string strSql = "EXEC dbo.spGetRepeaterDetails @callsign, @password, @repeaterid";
