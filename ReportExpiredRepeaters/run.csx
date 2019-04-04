@@ -30,7 +30,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         Connection.Close();
     }
 
-    var firstRow = dataTable[0][0];
+    var firstRow = dataTable.Rows[0][0];
     //var firstRow = JArray.FromObject(dataTable, JsonSerializer.CreateDefault(new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })).FirstOrDefault(); // Get the first row            
     var json = "{}";
     if (firstRow != null) {
