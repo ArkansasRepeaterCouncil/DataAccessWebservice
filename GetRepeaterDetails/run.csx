@@ -32,20 +32,15 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         Connection.Close();
     }
 
-    log.Info("Checkpoint 1");
     var firstRow = JArray.FromObject(dataTable, JsonSerializer.CreateDefault(new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })).FirstOrDefault(); // Get the first row            
-    log.Info("Checkpoint 2");
     var json = "{}";
     if (firstRow != null) {
         json = firstRow.ToString(); 
     }
-    log.Info("Checkpoint 3");
-    //string json = Newtonsoft.Json.JsonConvert.SerializeObject(dataTable, Newtonsoft.Json.Formatting.Indented);
     return new HttpResponseMessage(HttpStatusCode.OK) 
     {
         Content = new StringContent(json, Encoding.UTF8, "application/json")
     };
-    log.Info("Checkpoint 4");
 }
 
 public static string getValue(HttpRequestMessage req, string keyName) {

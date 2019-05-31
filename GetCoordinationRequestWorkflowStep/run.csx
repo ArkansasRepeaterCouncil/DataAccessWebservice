@@ -30,8 +30,8 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     }
 
     string output = "";
-    if (dataTable.Rows.Count > 0) {
-        output = dataTable.Rows[0][0].ToString();
+    for (int x = 0; x < dataTable.Rows.Count; x++) {
+        output += dataTable.Rows[x][0].ToString();
     }
 
     return new HttpResponseMessage(HttpStatusCode.OK) 

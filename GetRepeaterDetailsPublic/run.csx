@@ -32,7 +32,6 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     var firstRow = JArray.FromObject(dataTable, JsonSerializer.CreateDefault(new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })).FirstOrDefault(); // Get the first row            
     var json = firstRow.ToString(); 
 
-    //string json = Newtonsoft.Json.JsonConvert.SerializeObject(dataTable, Newtonsoft.Json.Formatting.Indented);
     return new HttpResponseMessage(HttpStatusCode.OK) 
     {
         Content = new StringContent(json, Encoding.UTF8, "application/json")
