@@ -61,7 +61,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 
             };
 
-            item.AddLink(new SyndicationLink(new Uri("https://arkansasrepeatercouncil.org")));
+            item.AddLink(new SyndicationLink(new Uri(row["RepeaterURL"].ToString())));
             item.AddCategory(new SyndicationCategory("Technology"));
             item.AddContributor(new SyndicationPerson(String.Format("{0} ({1})", FullName, Callsign), String.Format("{0} ({1}, {2})", Email, FullName, Callsign)));
 
