@@ -35,6 +35,61 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         output += dataTable.Rows[x][0].ToString();
     }
 
+    output = output.Replace("<Document>", @"<Document><Style id=""33cm"">
+	<IconStyle>
+		<scale>1.0</scale>
+		<Icon>
+			<href>http://maps.google.com/mapfiles/kml/pushpin/blue-pushpin.png</href>
+		</Icon>
+		<hotSpot x=""20"" y=""2"" xunits=""pixels"" yunits=""pixels""/>
+	</IconStyle>
+</Style>
+<Style id=""70cm"">
+	<IconStyle>
+		<scale>1.0</scale>
+		<Icon>
+			<href>http://maps.google.com/mapfiles/kml/pushpin/grn-pushpin.png</href>
+		</Icon>
+		<hotSpot x=""20"" y=""2"" xunits=""pixels"" yunits=""pixels""/>
+	</IconStyle>
+</Style>
+<Style id=""1.25"">
+	<IconStyle>
+		<scale>1.0</scale>
+		<Icon>
+			<href>http://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png</href>
+		</Icon>
+		<hotSpot x=""20"" y=""2"" xunits=""pixels"" yunits=""pixels""/>
+	</IconStyle>
+</Style>
+<Style id=""2m"">
+	<IconStyle>
+		<scale>1.0</scale>
+		<Icon>
+			<href>http://maps.google.com/mapfiles/kml/pushpin/purple-pushpin.png</href>
+		</Icon>
+		<hotSpot x=""20"" y=""2"" xunits=""pixels"" yunits=""pixels""/>
+	</IconStyle>
+</Style>
+<Style id=""6m"">
+	<IconStyle>
+		<scale>1.0</scale>
+		<Icon>
+			<href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+		</Icon>
+		<hotSpot x=""20"" y=""2"" xunits=""pixels"" yunits=""pixels""/>
+	</IconStyle>
+</Style>
+<Style id=""10m"">
+	<IconStyle>
+		<scale>1.0</scale>
+		<Icon>
+			<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+		</Icon>
+		<hotSpot x=""20"" y=""2"" xunits=""pixels"" yunits=""pixels""/>
+	</IconStyle>
+</Style>");
+
     return new HttpResponseMessage(HttpStatusCode.OK) 
     {
         Content = new StringContent(output, Encoding.UTF8, "application/json")
