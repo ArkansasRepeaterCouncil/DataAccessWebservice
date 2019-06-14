@@ -1,0 +1,13 @@
+{
+  "frameworks": {
+    "net46":{
+      "dependencies": {
+        "Newtonsoft.Json": "11.0.1",
+		    "System.Data.Common": "4.3.0",
+        "System.Data.SqlClient": "4.4.3",
+        "Microsoft.SqlServer.Types": "14.0.314.76",
+        "HashFoo.SqlServer.SpatialTypes": "10.0.0"
+      }
+    }
+   }
+}
