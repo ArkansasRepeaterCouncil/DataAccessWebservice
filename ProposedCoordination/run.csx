@@ -19,12 +19,6 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         Connection.Open();
         SqlCommand cmd = new SqlCommand(strSql, Connection);
 
-        // addParameter(cmd, req, "callsign", log);
-		// addParameter(cmd, req, "password", log);
-		// addParameter(cmd, req, "Latitude", log);
-        // addParameter(cmd, req, "Longitude", log);
-        // addParameter(cmd, req, "TransmitFrequency", log);
-		// addParameter(cmd, req, "ReceiveFrequency", log);
 		addParameters(cmd, req, log);
 
         SqlDataReader rdr = cmd.ExecuteReader();
@@ -34,7 +28,9 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         Connection.Close();
     }
 
-    string json = Newtonsoft.Json.JsonConvert.SerializeObject(dataTable, Newtonsoft.Json.Formatting.Indented);
+    var firstRow = JArray.FromObject(dataTable, JsonSerializer.CreateDefault(new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })).FirstOrDefault(); // Get the first row            
+    var json = firstRow.ToString(); 
+	
     return new HttpResponseMessage(HttpStatusCode.OK) 
     {
         Content = new StringContent(json, Encoding.UTF8, "application/json")
@@ -48,7 +44,7 @@ public static void addParameter(SqlCommand cmd, HttpRequestMessage req, string k
 
     if (val == null) { val = ""; }
 	
-	log.Info("Variable @" + keyName + " = " + val);
+	//log.Info("Variable @" + keyName + " = " + val);
     cmd.Parameters.AddWithValue("@" + keyName, val);
 }
 
@@ -73,7 +69,7 @@ public static void addParameters(SqlCommand cmd, HttpRequestMessage req, TraceWr
                     propertyValue = reader.Value.ToString();
                 }
 				
-				log.Info("Variable @" + propertyName + " = " + propertyValue);
+				//log.Info("Variable @" + propertyName + " = " + propertyValue);
                 cmd.Parameters.AddWithValue("@" + propertyName, propertyValue);
             }
         }
