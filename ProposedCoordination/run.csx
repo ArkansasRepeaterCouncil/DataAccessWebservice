@@ -11,7 +11,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 {
     var dataTable = new DataTable();
 
-    string strSql = "EXEC dbo.spProposedCoordination @userid, @latitude, @longitude, @transmitfreq, @receivefreq";
+    string strSql = "EXEC dbo.spProposedCoordination @callsign, @password, @latitude, @longitude, @transmitfreq, @receivefreq";
 	
     var ConnectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
     using (SqlConnection Connection = new SqlConnection(ConnectionString))
@@ -19,7 +19,8 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         Connection.Open();
         SqlCommand cmd = new SqlCommand(strSql, Connection);
 
-        addParameter(cmd, req, "userid");
+        addParameter(cmd, req, "callsign");
+		addParameter(cmd, req, "password");
 		addParameter(cmd, req, "latitude");
         addParameter(cmd, req, "longitude");
         addParameter(cmd, req, "transmitfreq");
