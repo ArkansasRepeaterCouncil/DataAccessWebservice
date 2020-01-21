@@ -19,12 +19,12 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         Connection.Open();
         SqlCommand cmd = new SqlCommand(strSql, Connection);
 
-        addParameter(cmd, req, "callsign");
-		addParameter(cmd, req, "password");
-		addParameter(cmd, req, "Latitude");
-        addParameter(cmd, req, "Longitude");
-        addParameter(cmd, req, "TransmitFrequency");
-		addParameter(cmd, req, "ReceiveFrequency");
+        addParameter(cmd, req, "callsign", log);
+		addParameter(cmd, req, "password", log);
+		addParameter(cmd, req, "Latitude", log);
+        addParameter(cmd, req, "Longitude", log);
+        addParameter(cmd, req, "TransmitFrequency", log);
+		addParameter(cmd, req, "ReceiveFrequency", log);
 
         SqlDataReader rdr = cmd.ExecuteReader();
         dataTable.Load(rdr);
@@ -40,7 +40,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     };
 }
 
-public static void addParameter(SqlCommand cmd, HttpRequestMessage req, string keyName) {
+public static void addParameter(SqlCommand cmd, HttpRequestMessage req, string keyName, TraceWriter log) {
     string val = req.GetQueryNameValuePairs()
         .FirstOrDefault(q => string.Compare(q.Key, keyName, true) == 0)
         .Value;
