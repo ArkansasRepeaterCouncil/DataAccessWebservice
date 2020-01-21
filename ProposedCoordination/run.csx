@@ -46,6 +46,7 @@ public static void addParameter(SqlCommand cmd, HttpRequestMessage req, string k
         .Value;
 
     if (val == null) { val = ""; }
-
+	
+	log.Info("Variable @" + keyName + " = " + val);
     cmd.Parameters.AddWithValue("@" + keyName, val);
 }
