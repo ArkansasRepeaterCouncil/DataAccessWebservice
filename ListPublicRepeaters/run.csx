@@ -11,7 +11,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 {
     var dataTable = new DataTable();
 
-    string strSql = "EXEC dbo.spListPublicRepeaters @state, @search, @latitude, @longitude, @miles, @pageSize, @pageNumber, @orderBy";
+    string strSql = "EXEC dbo.spListPublicRepeaters @state, @search, @latitude, @longitude, @miles, @pageSize, @pageNumber, @orderBy, @includeDecoordinated";
 
     var ConnectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
     using (SqlConnection Connection = new SqlConnection(ConnectionString))
@@ -27,6 +27,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         addParameter(cmd, req, "pageSize", "1000");
         addParameter(cmd, req, "pageNumber", "1");
         addParameter(cmd, req, "orderBy", "OutputFrequency");
+		addParameter(cmd, req, "includeDecoordinated");
 
         SqlDataReader rdr = cmd.ExecuteReader();
         dataTable.Load(rdr);
