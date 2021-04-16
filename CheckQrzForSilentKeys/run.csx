@@ -23,7 +23,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 // Get all current callsigns
     var dataTable = new DataTable();
 
-    string strSql = "Select callsign from users where callsign not like '%/SK'";
+    string strSql = "exec spGetAllCallsigns";
 	
     var ConnectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
     using (SqlConnection Connection = new SqlConnection(ConnectionString))
@@ -64,7 +64,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 		if ((qslmgr != "") && (qslmgr.StartsWith("SK "))) { 
 			log.Info(callsign + "/SK");
 		} else if ((dtExpdate > DateTime.MinValue) && (dtExpdate < DateTime.Now)) {
-			log.Info(callsign + " EXPIRED");
+			log.Info(callsign + "/EX");
 		}
     }
 
