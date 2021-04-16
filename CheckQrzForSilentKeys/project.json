@@ -1,0 +1,12 @@
+{
+  "frameworks": {
+    "net46":{
+      "dependencies": {
+        "Newtonsoft.Json": "11.0.1",
+		"System.Data.Common": "4.3.0",
+		"System.Data.SqlClient": "4.4.3",
+        "Microsoft.SyndicationFeed.ReaderWriter": "1.0.2"
+      }
+    }
+   }
+}
