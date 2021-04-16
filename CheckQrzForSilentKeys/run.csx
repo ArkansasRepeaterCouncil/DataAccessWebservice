@@ -42,7 +42,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 	for (int x = 0; x < dataTable.Rows.Count; x++) {
         // Send request to QRZ for data on this callsign
 		// Make sure they aren't a silent key
-		string callsign = dataTable.Rows[x][0];
+		string callsign = dataTable.Rows[x][0].ToString();
 		XmlDocument xDoc = new XmlDocument();
 		xDoc.Load("https://xmldata.qrz.com/xml/current/?s=" + qrzKey + "&callsign=" + callsign);
 
