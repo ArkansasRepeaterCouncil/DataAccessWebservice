@@ -14,6 +14,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 // Load application variables
     string qrzLoginUsername = Environment.GetEnvironmentVariable("qrzLoginUsername");
     string qrzLoginPassword = Environment.GetEnvironmentVariable("qrzLoginPassword");
+	string silentKeys = "";
 
 // Get a QRZ session key
     XmlDocument xDocKey = new XmlDocument();
@@ -63,9 +64,22 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 
 		if ((qslmgr != "") && (qslmgr.StartsWith("SK "))) { 
 			log.Info(callsign + "/SK");
+			silentKeys = silentKeys + callsign + ",";
 		} else if ((dtExpdate > DateTime.MinValue) && (dtExpdate < DateTime.Now)) {
 			log.Info(callsign + "/EX");
 		}
+    }
+	
+	strSql = "exec spUpdateSilentKeys @calls";
+    using (SqlConnection Connection = new SqlConnection(ConnectionString))
+    {
+        Connection.Open();
+        SqlCommand cmd = new SqlCommand(strSql, Connection);
+		cmd.Parameters.AddWithValue("@calls", silentKeys);
+        SqlDataReader rdr = cmd.ExecuteReader();
+        dataTable.Load(rdr);
+        rdr.Close();
+        Connection.Close();
     }
 
     return new HttpResponseMessage(HttpStatusCode.OK) 
