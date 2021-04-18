@@ -70,17 +70,19 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 		}
     }
 	
-	strSql = "exec spUpdateSilentKeys @calls";
-    using (SqlConnection Connection = new SqlConnection(ConnectionString))
-    {
-        Connection.Open();
-        SqlCommand cmd = new SqlCommand(strSql, Connection);
-		cmd.Parameters.AddWithValue("@calls", silentKeys);
-        SqlDataReader rdr = cmd.ExecuteReader();
-        dataTable.Load(rdr);
-        rdr.Close();
-        Connection.Close();
-    }
+	if (silentKeys != "") {
+		strSql = "exec spUpdateSilentKeys @calls";
+		using (SqlConnection Connection = new SqlConnection(ConnectionString))
+		{
+			Connection.Open();
+			SqlCommand cmd = new SqlCommand(strSql, Connection);
+			cmd.Parameters.AddWithValue("@calls", silentKeys);
+			SqlDataReader rdr = cmd.ExecuteReader();
+			dataTable.Load(rdr);
+			rdr.Close();
+			Connection.Close();
+		}
+	}
 
     return new HttpResponseMessage(HttpStatusCode.OK) 
     {
