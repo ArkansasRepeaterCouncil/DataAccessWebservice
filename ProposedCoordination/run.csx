@@ -72,7 +72,7 @@ public static void addParameters(SqlCommand cmd, HttpRequestMessage req, TraceWr
 				
                 cmd.Parameters.AddWithValue("@" + propertyName, propertyValue);
 				
-				vars += "@" + propertyName + " = " + propertyValue "\r\n";
+				vars += "@" + propertyName + " = " + propertyValue + "\r\n";
             }
         }
 		log.Info(vars);
