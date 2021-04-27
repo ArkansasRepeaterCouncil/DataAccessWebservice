@@ -45,7 +45,6 @@ public static void addParameter(SqlCommand cmd, HttpRequestMessage req, string k
 
     if (val == null) { val = ""; }
 	
-	//log.Info("Variable @" + keyName + " = " + val);
     cmd.Parameters.AddWithValue("@" + keyName, val);
 }
 
@@ -55,6 +54,7 @@ public static void addParameters(SqlCommand cmd, HttpRequestMessage req, TraceWr
 
     using (var reader = new Newtonsoft.Json.JsonTextReader(new StringReader(data)))
     {
+		string vars = "";
         while (reader.Read())
         {
             string propertyName = String.Empty;
@@ -70,9 +70,11 @@ public static void addParameters(SqlCommand cmd, HttpRequestMessage req, TraceWr
                     propertyValue = reader.Value.ToString();
                 }
 				
-				//log.Info("Variable @" + propertyName + " = " + propertyValue);
                 cmd.Parameters.AddWithValue("@" + propertyName, propertyValue);
+				
+				vars += "@" + propertyName + " = " + propertyValue "\r\n";
             }
         }
+		log.Info(vars);
     }
 }
