@@ -15,6 +15,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     string qrzLoginUsername = Environment.GetEnvironmentVariable("qrzLoginUsername");
     string qrzLoginPassword = Environment.GetEnvironmentVariable("qrzLoginPassword");
 	string silentKeys = "";
+	string expiredLicenses = "";
 
 // Get a QRZ session key
     XmlDocument xDocKey = new XmlDocument();
@@ -67,6 +68,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 			silentKeys = silentKeys + callsign + ",";
 		} else if ((dtExpdate > DateTime.MinValue) && (dtExpdate < DateTime.Now)) {
 			log.Info(callsign + "/EX");
+			expiredLicenses = expiredLicenses + callsign + ",";
 		}
     }
 	
@@ -83,10 +85,24 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 			Connection.Close();
 		}
 	}
+	
+	if (expiredLicenses != "") {
+		strSql = "exec spUpdateExpiredLicenses @calls";
+		using (SqlConnection Connection = new SqlConnection(ConnectionString))
+		{
+			Connection.Open();
+			SqlCommand cmd = new SqlCommand(strSql, Connection);
+			cmd.Parameters.AddWithValue("@calls", expiredLicenses);
+			SqlDataReader rdr = cmd.ExecuteReader();
+			dataTable.Load(rdr);
+			rdr.Close();
+			Connection.Close();
+		}
+	}
 
     return new HttpResponseMessage(HttpStatusCode.OK) 
     {
-        Content = new StringContent("ok", Encoding.UTF8, "application/text")
+        Content = new StringContent("ok", Encoding.UTF8, "text/plain")
     };
 }
 
