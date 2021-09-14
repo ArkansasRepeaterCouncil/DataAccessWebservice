@@ -14,7 +14,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     string repeaterid = getValue(req, "repeaterid");
 
     string strSql = "EXEC dbo.spListRepeaterLinks @repeaterid";
-    log.Info(strSql);
+    log.Info(strSql + " (" + repeaterid + ")");
 
     var ConnectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
     using (SqlConnection Connection = new SqlConnection(ConnectionString))
