@@ -12,7 +12,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 {
     var dataTable = new DataTable();
 
-    string strSql = "EXEC dbo.spAddRepeaterUser @callsign, @password, @repeaterid, @linkrepeaterid";
+    string strSql = "EXEC dbo.spAddRepeaterLink @callsign, @password, @repeaterid, @linkrepeaterid";
 
     var ConnectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
     using (SqlConnection Connection = new SqlConnection(ConnectionString))
