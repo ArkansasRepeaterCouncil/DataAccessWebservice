@@ -12,7 +12,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 {
     var dataTable = new DataTable();
 
-    string strSql = "EXEC dbo.spRemoveRepeaterLink @callsign, @password, @linkid";
+    string strSql = "EXEC dbo.spRemoveRepeaterLink @callsign, @password, @repeaterid, @linkrepeaterid";
 
     var ConnectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
     using (SqlConnection Connection = new SqlConnection(ConnectionString))
@@ -22,7 +22,8 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 
         addParameter(cmd, req, "callsign");
         addParameter(cmd, req, "password");
-        addParameter(cmd, req, "linkid");
+        addParameter(cmd, req, "repeaterid");
+        addParameter(cmd, req, "linkrepeaterid");
 
         SqlDataReader rdr = cmd.ExecuteReader();
         dataTable.Load(rdr);
