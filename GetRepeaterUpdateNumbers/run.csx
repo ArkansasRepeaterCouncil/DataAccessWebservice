@@ -12,13 +12,15 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 {
     var dataTable = new DataTable();
 
-    string strSql = "EXEC dbo.spGetRepeaterUpdateNumbers";
+    string strSql = "EXEC dbo.spGetRepeaterUpdateNumbers @state";
 
     var ConnectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
     using (SqlConnection Connection = new SqlConnection(ConnectionString))
     {
         Connection.Open();
         SqlCommand cmd = new SqlCommand(strSql, Connection);
+
+        addParameter(cmd, req, "state");
 
         SqlDataReader rdr = cmd.ExecuteReader();
         dataTable.Load(rdr);
