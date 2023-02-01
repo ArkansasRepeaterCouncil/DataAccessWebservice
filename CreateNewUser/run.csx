@@ -11,7 +11,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
 {
     var dataTable = new DataTable();
 
-    string strSql = "EXEC dbo.spCreateNewUser @callsign, @fullname, @address, @city, @state, @zip, @email";
+    string strSql = "EXEC dbo.spCreateNewUser @callsign, @fullname, @address, @city, @state, @zip, @email, @webSiteState";
 
     var ConnectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
     using (SqlConnection Connection = new SqlConnection(ConnectionString))
@@ -26,6 +26,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         addParameter(cmd, req, "state");
         addParameter(cmd, req, "zip");
         addParameter(cmd, req, "email");
+		addParameter(cmd, req, "websitestate");
 
         SqlDataReader rdr = cmd.ExecuteReader();
         dataTable.Load(rdr);
