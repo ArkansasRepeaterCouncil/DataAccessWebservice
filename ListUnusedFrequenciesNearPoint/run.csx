@@ -24,6 +24,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         addParameter(cmd, req, "miles");
         addParameter(cmd, req, "band");
 
+		cmd.CommandTimeout = 15;
         SqlDataReader rdr = cmd.ExecuteReader();
         dataTable.Load(rdr);
 
