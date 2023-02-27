@@ -33,6 +33,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     }
 
     string json = Newtonsoft.Json.JsonConvert.SerializeObject(dataTable, Newtonsoft.Json.Formatting.Indented);
+	log.Info("OUTPUT: " + json);
     return new HttpResponseMessage(HttpStatusCode.OK) 
     {
         Content = new StringContent(json, Encoding.UTF8, "application/json")
@@ -46,5 +47,6 @@ public static void addParameter(SqlCommand cmd, HttpRequestMessage req, string k
 
     if (val == null) { val = ""; }
 
+	log.Info(keyname + " = " + val);
     cmd.Parameters.AddWithValue("@" + keyName, val);
 }
