@@ -19,10 +19,10 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         Connection.Open();
         SqlCommand cmd = new SqlCommand(strSql, Connection);
 
-        addParameter(cmd, req, "lat");
-        addParameter(cmd, req, "lon");
-        addParameter(cmd, req, "miles");
-        addParameter(cmd, req, "band");
+        addParameter(cmd, log, req, "lat");
+        addParameter(cmd, log, req, "lon");
+        addParameter(cmd, log, req, "miles");
+        addParameter(cmd, log, req, "band");
 
 		cmd.CommandTimeout = 60;
         SqlDataReader rdr = cmd.ExecuteReader();
@@ -40,13 +40,13 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     };
 }
 
-public static void addParameter(SqlCommand cmd, HttpRequestMessage req, string keyName) {
+public static void addParameter(SqlCommand cmd, TraceWriter log, HttpRequestMessage req, string keyName) {
     string val = req.GetQueryNameValuePairs()
         .FirstOrDefault(q => string.Compare(q.Key, keyName, true) == 0)
         .Value;
 
     if (val == null) { val = ""; }
 
-	log.Info(keyname + " = " + val);
+	log.Info(keyName + " = " + val);
     cmd.Parameters.AddWithValue("@" + keyName, val);
 }
