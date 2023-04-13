@@ -6,6 +6,8 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using System.Xml;
 using System.Text;
+using System.Data;
+using System.Data.SqlClient;
 
 public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
 {
@@ -32,16 +34,14 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
 
     return (ActionResult)new OkObjectResult("{ \"fulfillmentMessages\": [{\"text\": {\"text\": [\"" + response + "\"]}}]}");
 }
-
-public static string callsignLookup(string callsign, ILogger log)
-{
+public static string callsignLookup(string callsign, ILogger log) {
     callsign = callsign.ToUpper().Replace("?","");
 
     // Load application variables
     string qrzLoginUsername = Environment.GetEnvironmentVariable("qrzLoginUsername");
     string qrzLoginPassword = Environment.GetEnvironmentVariable("qrzLoginPassword");
 
-// Get a QRZ session key
+	// Get a QRZ session key
     XmlDocument xDocKey = new XmlDocument();
     xDocKey.Load("https://xmldata.qrz.com/xml/?username=" + qrzLoginUsername + "&password=" + qrzLoginPassword);
     string qrzKey = xDocKey.GetElementsByTagName("Key")[0].InnerText;
@@ -49,7 +49,6 @@ public static string callsignLookup(string callsign, ILogger log)
     // Send request to QRZ for data on this callsign
     XmlDocument xDoc = new XmlDocument();
     xDoc.Load("https://xmldata.qrz.com/xml/current/?s=" + qrzKey + "&callsign=" + callsign);
-
     
     string name = string.Format("{0} {1}", GetXmlValue(xDoc, "fname"), GetXmlValue(xDoc, "name"));
     string expireDate = GetXmlValue(xDoc, "expdate");
@@ -77,11 +76,41 @@ public static string callsignLookup(string callsign, ILogger log)
         email = string.Format("  The email address they have on file is {0}.", email);
     }
 
-    return string.Format("{0}{1} is assigned to {2}.  It will expire on {3}.  {4}", callsign, licClass, name, expireDate, email);
+	string userInfoJson = "";
+	string userInfoDescription = "";
+    var ConnectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
+    using (SqlConnection Connection = new SqlConnection(ConnectionString))
+    {
+        Connection.Open();
+        SqlCommand cmd = new SqlCommand("EXEC dbo.sp_QueryCallsign @callsign", Connection);
+		cmd.Parameters.AddWithValue("@callsign", callsign);
+        userInfoJson = cmd.ExecuteScalar();
+        Connection.Close();
+    }
+	if (userInfoJson != "") {
+		var dynObj = JsonConvert.DeserializeObject<dynamic>(userInfoJson);
+		userInfoDescription = string.Format("Our database shows that {0} belongs to {1}, who is associated with {2} repeaters.", callsign, dynObj.User.Name, dynObj.User.Repeaters.Count);
+		if ((dynObj.User.Phone.Home + dynObj.User.Phone.Work + dynObj.User.Phone.Cell).Trim() != "") {
+			userInfoDescription += "  Here are the phone numbers we have on file: ";
+			if (dynObj.User.Phone.Home != "") { userInfoDescription += dynObj.User.Phone.Home + " (home)"; }
+			if (dynObj.User.Phone.Work != "") {
+				if (dynObj.User.Phone.Home != "") { userInfoDescription += ", "; }
+				userInfoDescription += dynObj.User.Phone.Work + " (work)";
+			}
+			if (dynObj.User.Phone.Cell != "") {
+				if (dynObj.User.Phone.Home + dynObj.User.Phone.Work != "") { userInfoDescription += ", "; }
+				userInfoDescription += dynObj.User.Phone.Cell + " (cell)";
+			}
+			userInfoDescription += ".";
+		}
+		if (dynObj.User.Email != "") { userInfoDescription += "  The email address we have for them is " + dynObj.User.Email; }
+	}
+	
+    return string.Format("According to QRZ, {0}{1} is assigned to {2}.  The license expiration date is {3}.{4}{5}", callsign, licClass, name, expireDate, email, userInfoDescription);
 }
 
-public static string GetXmlValue(XmlDocument xDoc, string element) 
-{
+// Utility functions
+public static string GetXmlValue(XmlDocument xDoc, string element) {
     string strReturn = "";
 
     if (xDoc.GetElementsByTagName(element).Count > 0) {
@@ -89,4 +118,13 @@ public static string GetXmlValue(XmlDocument xDoc, string element)
     }
 
     return strReturn;
+}
+public static void addParameter(SqlCommand cmd, HttpRequestMessage req, string keyName) {
+    string val = req.GetQueryNameValuePairs()
+        .FirstOrDefault(q => string.Compare(q.Key, keyName, true) == 0)
+        .Value;
+
+    if (val == null) { val = ""; }
+
+    cmd.Parameters.AddWithValue("@" + keyName, val);
 }
